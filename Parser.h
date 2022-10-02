@@ -1,49 +1,84 @@
-// reading a text file
+//
+// Created by yep12 on 10/1/2022.
+//
+
+#ifndef UNTITLED_PARSER_H
+#define UNTITLED_PARSER_H
+#include <vector>
+#include "Token.h"
 #include <iostream>
-#include <fstream>
-#include <string>
-#include "Lexer.h"
+using namespace std;
 
-int main(int argc, char* argv[]) {
-    Lexer theLex;
-    string lexString;
-    string filename = argv[1];
-    ifstream myfile;
-    myfile.open(filename);
-    if (myfile.is_open())
-    {
-        while (myfile.peek()!=EOF)
-        {
+class Parser {
+private:
+    vector<Token> tokens;
+public:
+//The order must be: Schemes, then Facts, then Rules, then Queries
+    void startParse(){
 
-            char line;
-            line = myfile.get();
-            lexString.push_back(line);
 
-        }
-        myfile.close();
-        theLex.run(lexString);
+
     }
 
-    else cout << "Unable to open file";
-    return 0;
-}
 
-/*
- * COMMENT
+    TokenType tokenType() const {
+        return tokens.at(0).type;
+    }
+    void advanceToken() {
+        delete tokens.at(begin());
+        tokens.erase(tokens.begin());
+    }
+    void throwError() {
+        cout << "error" << endl;
+    }
 
-UNDEF VALUE
- block comment does termin undef (when "#" and then you hit the end of the file)
- copy string auto to make block comment automata
-
-string doesn't termin undef (when "'''" and then you hit the end of the file)
 
 
- Undefined tokens are:
 
-A single character that cannot be the first character of a valid token.
-A string that is not terminated.
-A comment that is not terminated.
 
-GOING TO NEED THREE differ undefined automata header files
+//MATCHING SYMBOL WITH WAS IS CUYRRENTLY IN THE STACK
+    void match(TokenType t) {
+        cout << "match: " << t << endl;
+        if (tokenType() == t)
+            advanceToken();
+        else
+            throwError();
+    }
 
- */
+
+
+//ID LIST
+    void idList() {
+        if (tokenType() == COMMA) {
+            match(COMMA);
+            match(ID);
+            idList();
+        } else {
+            // lambda
+        }
+    }
+
+
+
+
+    void scheme() {
+        if (tokenType() == ID) {
+            match(ID);
+            match(LEFT_PAREN);
+            match(ID);
+            idList();
+            match(RIGHT_PAREN);
+        } else {
+            throwError();
+        }
+    }
+
+
+
+    void getParserVecSize(){cout << tokens.size();}
+    Parser(const vector<Token>& tokens) : tokens(tokens) { }
+
+};
+
+
+#endif //UNTITLED_PARSER_H

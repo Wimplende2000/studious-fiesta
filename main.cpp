@@ -3,11 +3,11 @@
 #include <fstream>
 #include <string>
 #include "Lexer.h"
-
+#include "Parser.h"
 int main(int argc, char* argv[]) {
     Lexer theLex;
     string lexString;
-    string filename = argv[1];
+    string filename = "example.txt";
     ifstream myfile;
     myfile.open(filename);
     if (myfile.is_open())
@@ -22,7 +22,12 @@ int main(int argc, char* argv[]) {
         }
         myfile.close();
         theLex.run(lexString);
+    Parser par1(theLex.tokens);
+
+
     }
+//pass parser the vector of tokens
+
 
     else cout << "Unable to open file";
     return 0;
